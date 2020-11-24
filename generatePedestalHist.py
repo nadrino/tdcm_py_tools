@@ -102,10 +102,12 @@ for card in cardList:
     pedestalTree.Draw("Chip:Channel>>hist2dStdDev", "StdDev", "goff")
     hist2dMean.Write("hist2dStdDev" + str(card))
 
-histMean = TH1D("histMean", "histMean", len(entriesList), -0.5, len(entriesList)-0.5)
-for iEntry in range(len(entriesList)):
-    histMean.Fill(iEntry, valuesList[iEntry]["Mean"])
+    histMean = TH1D("histMean", "histMean", len(channelList)*len(chipList), 0, len(channelList)*len(chipList))
+    pedestalTree.Draw(str(len(channelList))+"*Chip + Channel>>histMean", "Mean", "goff")
+    histMean.Write("histMean" + str(card))
 
-print("Writing hist to file...")
-histMean.Write("histMean")
+    histMean = TH1D("histStdDev", "histStdDev", len(channelList)*len(chipList), 0, len(channelList)*len(chipList))
+    pedestalTree.Draw(str(len(channelList))+"*Chip + Channel>>histStdDev", "StdDev", "goff")
+    histMean.Write("histStdDev" + str(card))
+
 outFile.Close()

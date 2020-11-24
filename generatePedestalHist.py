@@ -62,7 +62,7 @@ varNameList.append("Mean")
 varNameList.append("StdDev")
 
 # all variables are stored in this event container array. This will prevent python to reallocate doubles at each loop
-output_ntuple = TNtupleD("neutrino_tracks", "neutrino_tracks", (":".join(varNameList[0:len(varNameList)])))
+output_ntuple = TNtupleD("pedestalData", "pedestalData", (":".join(varNameList[0:len(varNameList)])))
 event_container = array("d", numpy.zeros((len(varNameList),), dtype=float))
 for iEntry in range(len(entriesList)):
     event_container[0] = entriesList[iEntry]["Card"]

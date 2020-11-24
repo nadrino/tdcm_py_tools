@@ -33,8 +33,8 @@ for logLine in fileLines:
     if newEntry not in entriesList: # only read the first pass, the second is renormalized data
         entriesList.append(newEntry)
         newValues = dict()
-        newValues["Mean"] = int(splitedStr[8])
-        newValues["StdDev"] = int(splitedStr[10])
+        newValues["Mean"] = float(splitedStr[8])
+        newValues["StdDev"] = float(splitedStr[10])
         valuesList.append(newValues)
 
 histMean = TH1D("histMean", "histMean", len(newEntry), -0.5, len(newEntry)-0.5)

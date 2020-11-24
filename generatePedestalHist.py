@@ -5,6 +5,7 @@ import sys, getopt
 from array import array
 import numpy
 from ROOT import TH1D
+from ROOT import TH2D
 from ROOT import TFile
 from ROOT import TNtupleD
 
@@ -24,6 +25,10 @@ entriesList = list()
 valuesList = list()
 chipLines = list()
 
+cardList = list()
+chipList = list()
+channelList = list()
+
 print("Parsing pedestals...")
 lastChannel = -1
 for logLine in fileLines:
@@ -35,6 +40,16 @@ for logLine in fileLines:
     newEntry["Chip"] = int(splitedStr[3])
     newEntry["Channel"] = int(splitedStr[5])
     if newEntry not in entriesList: # only read the first pass, the second is renormalized data
+
+        if newEntry["Card"] not in cardList:
+            cardList.append(newEntry["Card"])
+
+        if newEntry["Chip"] not in chipList:
+            chipList.append(newEntry["Chip"])
+
+        if newEntry["Channel"] not in channelList:
+            channelList.append(newEntry["Channel"])
+
         entriesList.append(newEntry)
         newValues = dict()
         newValues["Mean"] = float(splitedStr[8])
@@ -62,30 +77,32 @@ varNameList.append("Mean")
 varNameList.append("StdDev")
 
 # all variables are stored in this event container array. This will prevent python to reallocate doubles at each loop
-output_ntuple = TNtupleD("pedestalData", "pedestalData", (":".join(varNameList[0:len(varNameList)])))
+pedestalTree = TNtupleD("pedestalTree", "pedestalTree", (":".join(varNameList[0:len(varNameList)])))
 event_container = array("d", numpy.zeros((len(varNameList),), dtype=float))
+
 for iEntry in range(len(entriesList)):
     event_container[0] = entriesList[iEntry]["Card"]
     event_container[1] = entriesList[iEntry]["Chip"]
     event_container[2] = entriesList[iEntry]["Channel"]
     event_container[3] = valuesList [iEntry]["Mean"]
     event_container[4] = valuesList [iEntry]["StdDev"]
+    pedestalTree.Fill(event_container[0:len(varNameList)])
 
-    output_ntuple.Fill(event_container[0:len(varNameList)])
-output_ntuple.GetTree().Write()
-
-# entriesDict = dict() # entries2dList[Card][Chip][Channel] = [Mean,StdDeV]
-# for entry in entriesList:
-#     if not entry["Card"] in entriesDict:
-#         entriesDict[entry["Card"]] = dict()
-#     if not entry["Chip"] in entriesDict[entry["Card"]]:
-#         entriesDict[entry["Card"]][entry["Chip"]] = dict()
-#
-
-histMean = TH1D("histMean", "histMean", len(entriesList), -0.5, len(entriesList)-0.5)
-# hist2dMean = TH2D("hist2dMean", "hist2dMean", , , )
+pedestalTree.GetTree().Write()
 
 print("Putting data in histograms...")
+
+for card in cardList:
+
+    hist2dMean = TH2D("hist2dMean", "hist2dMean", len(channelList), 0, len(channelList), len(chipList), 0, len(chipList))
+    pedestalTree.Draw("Chip:Channel>>hist2dMean", "Mean", "goff")
+    hist2dMean.Write("hist2dMean" + str(card))
+
+    hist2dStdDev = TH2D("hist2dStdDev", "hist2dStdDev", len(channelList), 0, len(channelList), len(chipList), 0, len(chipList))
+    pedestalTree.Draw("Chip:Channel>>hist2dStdDev", "StdDev", "goff")
+    hist2dMean.Write("hist2dStdDev" + str(card))
+
+histMean = TH1D("histMean", "histMean", len(entriesList), -0.5, len(entriesList)-0.5)
 for iEntry in range(len(entriesList)):
     histMean.Fill(iEntry, valuesList[iEntry]["Mean"])
 

@@ -37,11 +37,11 @@ for logLine in fileLines:
         newValues["StdDev"] = float(splitedStr[10])
         valuesList.append(newValues)
 
-histMean = TH1D("histMean", "histMean", len(newEntry), -0.5, len(newEntry)-0.5)
+histMean = TH1D("histMean", "histMean", len(entriesList), -0.5, len(entriesList)-0.5)
 
 print("Putting data in histograms...")
 for iEntry in range(len(entriesList)):
-    histMean.Fill(iEntry, newValues["Mean"])
+    histMean.Fill(iEntry, valuesList[iEntry]["Mean"])
 
 print("Writing hist to file...")
 outFile = TFile("outFile_"+filePath.replace("/","_")+".root", "RECREATE")

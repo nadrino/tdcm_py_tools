@@ -49,7 +49,7 @@ if len(entriesList) == 0:
     print("No entry have been found.")
     exit(1)
 
-outFilePath = "outFile_"+filePath.replace("/","_").split('.')[0:-1]+".root"
+outFilePath = "outFile_"+"_".join(filePath.replace("/","_").split('.')[0:-1])+".root"
 
 print("Output file will be writen as: " + outFilePath)
 outFile = TFile.Open(outFilePath, "RECREATE")

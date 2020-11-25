@@ -133,6 +133,8 @@ fe 0 hped 3 * getsummary
 #  Set Data server target to DAQ
 be 0 serve_target 1
 
+quit
+
 # ------TEST PULSE SECTION------
 
 # ------END------

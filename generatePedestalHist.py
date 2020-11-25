@@ -13,11 +13,19 @@ from ROOT import TNtupleD
 nbIterations = -1
 currentIteration = 0
 filePath = ""
-pedestalTree = None
 
 cardList = list()
 chipList = list()
 channelList = list()
+varNameList = list()
+varNameList.append("Card")
+varNameList.append("Chip")
+varNameList.append("Channel")
+varNameList.append("Mean")
+varNameList.append("StdDev")
+varNameList.append("Iteration")
+
+pedestalTree = TNtupleD("pedestalTree", "pedestalTree", (":".join(varNameList[0:len(varNameList)])))
 
 def parseFile():
 
@@ -72,17 +80,7 @@ def parseFile():
     print("Output file will be writen as: " + outFilePath)
     outFile = TFile.Open(outFilePath, "RECREATE")
 
-    varNameList = list()
-    varNameList.append("Card")
-    varNameList.append("Chip")
-    varNameList.append("Channel")
-    varNameList.append("Mean")
-    varNameList.append("StdDev")
-    varNameList.append("Iteration")
-
     # all variables are stored in this event container array. This will prevent python to reallocate doubles at each loop
-    if pedestalTree is None:
-        pedestalTree = TNtupleD("pedestalTree", "pedestalTree", (":".join(varNameList[0:len(varNameList)])))
     event_container = array("d", numpy.zeros((len(varNameList),), dtype=float))
 
     for iEntry in range(len(entriesList)):

@@ -1,0 +1,144 @@
+##################################
+# FEM + FEC0 + FEC1 (AFTER)
+# Pedestal Run
+##################################
+#
+###########################
+# Stop FE sampling in case it was left ON
+###########################
+fe sca enable 0
+###########################
+# Stop data pump on back end in case some were left ON
+###########################
+be pump ena 0x0
+###########################
+# Restart back-end trigger state machine
+###########################
+be restart
+###########################
+# Disable back-end event builder 
+###########################
+be eb run 0
+##################################
+# Front-end configuration
+##################################
+fe mode after
+fe fec_enable 0x3
+fe asic_mask 0x0000
+fe test_enable 0
+fe test_mode 0
+fe test_zbt 0
+# Define ADC model
+fe adc 0 model AD9637
+# Set mode to offset binary coding
+fe adc 0 write 0x14 0x00
+# Define ADC model
+fe adc 1 model AD9637
+# Set mode to offset binary coding
+fe adc 1 write 0x14 0x00
+##################################
+# AFTER settings
+##################################
+# Gain: 120, 240, 360 or 600 (fC)
+fe after 0:15 gain 120
+# Shaping time: 116 to 1912 (ns) 16 possible values
+fe after 0:15 time 116
+fe after 0:15 write 2 0x0
+# Reset level marker
+fe after 0:15 en_mkr_rst 1
+fe after 0:15 rst_level 0
+# Last Cell Read
+fe after 0:15 rd_from_0 0
+fe after 0:15 test_digout 0
+# Polarity 0: neg. 1:pos.
+fe polarity 0:15 0x0
+fe forceon_all 0x1
+fe sca cnt 0x1fe
+fe sca wckdiv 0x4
+fe crc32_insert_ena 1
+fe keep_fco 0x0
+fe rst_len 1
+fe skip_rst 0x0
+fe keep_rst 0x1
+fe emit_lst_cell_rd 0x1
+fe trig_ena 0x8
+fe sca enable 1
+fe fra_timeout 0
+sleep 1
+##################################
+# Back-end configuration
+##################################
+be crc32_check_ena 1
+# Data Target
+be serve_target 1
+# Data Pump
+be pump timed 1
+be pump timeout 0
+be pump ena fe_workset
+# Event Builder
+be eb keep_fem_soe 1
+be eb check_ev_nb 1
+be eb check_ev_ts 1
+be eb ts_tolerance 0
+be eb run 1
+##################################
+# Event generator
+##################################
+# Event limit: 0x0:infinite; 0x1:1; 0x2:10; 0x3:100; 0x4: 1000; 0x5:10000; 0x6:100000; 0x7:1000000
+be event_limit 0x2
+# Range: 0:0.1Hz-10Hz 1:10Hz-1kHz 2:100Hz-10kHz 3:1kHz-100kHz
+be trig_rate 0 5
+##################################
+# Disable Pedestal Equalization
+##################################
+fe subtract_ped 0
+# Set histogram offset polarity negative: 0 positive: 3584
+fe hped 0:15 * offset 0
+# Clear all pedestal histograms
+fe hped 0:15 * clr
+##################################
+# Set Data server target:
+#  0: drop data
+#  1: send to DAQ
+#  2: feed to pedestal histos
+#  3: feed to hit channel histos 
+##################################
+be serve_target 2
+##################################
+# Enable data taking
+##################################
+be isobus 0x0C
+be isobus 0x20
+be trig_ena 1
+##################################
+# Wait pedestal accumulation completion
+##################################
+sleep 30
+##################################
+# Disable data taking
+##################################
+be trig_ena 0
+##################################
+# Print pedestals of all ASICs
+##################################
+fe hped 0 * getsummary
+fe hped 1 * getsummary
+fe hped 2 * getsummary
+fe hped 3 * getsummary
+fe hped 4 * getsummary
+fe hped 5 * getsummary
+fe hped 6 * getsummary
+fe hped 7 * getsummary
+fe hped 8 * getsummary
+fe hped 9 * getsummary
+fe hped 10 * getsummary
+fe hped 11 * getsummary
+fe hped 12 * getsummary
+fe hped 13 * getsummary
+fe hped 14 * getsummary
+fe hped 15 * getsummary
+##################################
+# Set Data server target to DAQ
+##################################
+be serve_target 1
+quit

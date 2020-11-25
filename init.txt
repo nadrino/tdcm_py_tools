@@ -1,0 +1,55 @@
+###########################
+#
+# ARC cold start script
+#
+###########################
+be dcbal_enc 1
+be inv_tdcm_mosi 0
+###########################
+# Set active FE
+###########################
+be fe_workset 0x1
+be fe active fe_workset
+be sel_fe fe_workset
+###########################
+# Enable transceiver of FE
+###########################
+be iic sfpmezz 0 enable fe_workset
+#be iic sfpmezz 1 enable fe_workset
+###########################
+# Reset TX (common to all FE)
+###########################
+be tx_reset 1
+###########################
+# Reset RX (per FE)
+###########################
+be rx_reset fe_workset cycle
+###########################
+# Clear reset TX
+###########################
+be tx_reset 0
+sleep 4
+###########################
+# Enumerate FE
+###########################
+be dna get
+be dna push
+be dna get
+fe dna show
+###########################
+# Stop FE sampling in case it was left ON
+###########################
+fe sca enable 0
+###########################
+# Stop data pump on back end in case some were left ON
+###########################
+be pump ena 0x0
+###########################
+# Restart back-end trigger state machine
+###########################
+be restart
+###########################
+# Disable back-end event builder 
+###########################
+be eb run 0
+quit

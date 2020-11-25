@@ -175,6 +175,8 @@ def generateCovMatrix():
     hist2dCor.SetName ("hist2dCor")
     for iBin in range(histMeanAverage.GetNbinsX()):
         for jBin in range(histMeanAverage.GetNbinsX()):
+            if hist2dCov.GetBinContent(jBin+1, jBin+1) == 0 or hist2dCov.GetBinContent(iBin+1, iBin+1) == 0:
+                continue
             hist2dCor.SetBinContent(iBin+1, jBin+1,
                                     hist2dCov.GetBinContent(iBin+1, jBin+1)
                                     /hist2dCov.GetBinContent(iBin+1, iBin+1)

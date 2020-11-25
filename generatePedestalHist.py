@@ -91,7 +91,6 @@ def parseFile():
     print("Putting data in histograms...")
 
     outFile.mkdir("Iteration-" + str(currentIteration))
-    outFile.cd("Iteration-" + str(currentIteration))
 
     for card in cardList:
 
@@ -100,35 +99,35 @@ def parseFile():
         hist2dMean.SetTitle("Mean value")
         hist2dMean.GetXaxis().SetTitle("Channel #")
         hist2dMean.GetYaxis().SetTitle("Chip #")
-        hist2dMean.Write("hist2dMean" + str(card))
+        hist2dMean.Write("Iteration-" + str(currentIteration) + "/hist2dMean" + str(card))
 
         hist2dStdDev = TH2D("hist2dStdDev", "hist2dStdDev", len(channelList), 0, len(channelList), len(chipList), 0, len(chipList))
         pedestalTree.Draw("Chip:Channel>>hist2dStdDev", "StdDev * (Iteration == " + str(currentIteration) + " && Mean < 511)", "goff")
         hist2dStdDev.SetTitle("StdDev value")
         hist2dStdDev.GetXaxis().SetTitle("Channel #")
         hist2dStdDev.GetYaxis().SetTitle("Chip #")
-        hist2dStdDev.Write("hist2dStdDev" + str(card))
+        hist2dStdDev.Write("Iteration-" + str(currentIteration) + "/hist2dStdDev" + str(card))
 
         histMean = TH1D("histMean", "histMean", len(channelList)*len(chipList), 0, len(channelList)*len(chipList))
         pedestalTree.Draw(str(len(channelList))+"*Chip + Channel>>histMean", "Mean * (Iteration == " + str(currentIteration) + " && Mean < 511)", "goff")
         histMean.GetXaxis().SetTitle(str(len(channelList))+"*Chip# + Channel#")
-        histMean.Write("histMean" + str(card))
+        histMean.Write("Iteration-" + str(currentIteration) + "/histMean" + str(card))
 
         histDev = TH1D("histStdDev", "histStdDev", len(channelList)*len(chipList), 0, len(channelList)*len(chipList))
         pedestalTree.Draw(str(len(channelList))+"*Chip + Channel>>histStdDev", "StdDev * (Iteration == " + str(currentIteration) + " && Mean < 511)", "goff")
         histDev.GetXaxis().SetTitle(str(len(channelList)) + "*Chip# + Channel#")
-        histDev.Write("histStdDev" + str(card))
-
-    outFile.cd()
+        histDev.Write("Iteration-" + str(currentIteration) + "/histStdDev" + str(card))
 
 
 def generateCovMatrix():
+
+    global nbIterations
 
     print("Computing average values...")
     meanHistList = list()
     for iIteration in range(nbIterations):
         meanHistList.append(
-            outFile.Get("Iteration-" + str(iIteration) + "/histMean")
+            outFile.Get("Iteration-" + str(iIteration) + "/histMean0")
         )
 
     histMeanSampleCounts = meanHistList[0].Clone()

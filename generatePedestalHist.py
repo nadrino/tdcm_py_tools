@@ -206,10 +206,10 @@ else:
         print("Power cycle the TDCM...")
         print("Power OFF...")
         os.system("sudo /home/lpnhe/powtdcm.py 0")
-        os.system("sleep 5")
+        os.system("sleep 10")
         print("Power ON...")
         os.system("sudo /home/lpnhe/powtdcm.py 1")
-        os.system("sleep 10")
+        os.system("sleep 15")
 
         print("Taking pedestals...")
         os.system("pclient -s 192.168.0.44 -f readPedScriptV2.txt > " + filePath)

@@ -96,10 +96,16 @@ for card in cardList:
 
     hist2dMean = TH2D("hist2dMean", "hist2dMean", len(channelList), 0, len(channelList), len(chipList), 0, len(chipList))
     pedestalTree.Draw("Chip:Channel>>hist2dMean", "Mean", "goff")
+    hist2dMean.SetTitle("Mean value")
+    hist2dMean.GetXaxis().SetTitle("Channel #")
+    hist2dMean.GetYaxis().SetTitle("Chip #")
     hist2dMean.Write("hist2dMean" + str(card))
 
     hist2dStdDev = TH2D("hist2dStdDev", "hist2dStdDev", len(channelList), 0, len(channelList), len(chipList), 0, len(chipList))
     pedestalTree.Draw("Chip:Channel>>hist2dStdDev", "StdDev", "goff")
+    hist2dMean.SetTitle("StdDev value")
+    hist2dMean.GetXaxis().SetTitle("Channel #")
+    hist2dMean.GetYaxis().SetTitle("Chip #")
     hist2dMean.Write("hist2dStdDev" + str(card))
 
     histMean = TH1D("histMean", "histMean", len(channelList)*len(chipList), 0, len(channelList)*len(chipList))

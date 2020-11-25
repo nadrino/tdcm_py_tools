@@ -1,0 +1,139 @@
+
+# ------COLD START SECTION------
+
+#  FEM cold start script
+be 0 dcbal_enc 1
+be 0 inv_tdcm_mosi 0
+
+# Set active FE
+be 0 fe active fe_workset
+be 0 sel_fe fe_workset
+
+# Enable transceiver of FE
+be 0 iic sfpmezz 0 enable fe_workset
+
+# Reset TX (common to all FE)
+be tx_reset 1
+
+# Reset RX (per FE)
+be rx_reset fe_workset cycle
+
+# Clear reset TX
+be tx_reset 0
+sleep 4
+
+# Enumerate FE
+be dna get
+be dna push
+be dna get
+fe dna show
+
+# Stop FE sampling in case it was left ON
+fe sca enable 0
+
+# Stop data pump on back end in case some were left ON
+be pump ena 0x0
+
+# Restart back-end trigger state machine
+be restart
+
+# Disable back-end event builder 
+be eb run 0
+
+# Set ADC delay values in FE
+fe delay_adc dco 0 0xF
+fe delay_adc dco 1 0xF
+fe delay_adc fco 0 0x0
+fe delay_adc fco 1 0x0
+fe delay_adc pipe 0 0x8
+fe delay_adc pipe 1 0x8
+
+# TDCM monitoring
+be 0 moni T
+be 0 moni V
+be 0 moni A
+be 0 moni I
+be 0 moni S
+
+# FE monitoring
+fe 0 moni T
+fe 0 moni V
+fe 0 moni A
+fe 0 moni I
+fe 0 moni S
+
+# ------PED RUN SECTION------
+be 0 restart
+
+#  Front-end configuration
+fe 0 mode after
+fe 0 fec_enable 1
+fe 0 asic_mask 0x0000
+
+# AFTER settings
+fe 0 after 0:3 gain 120 
+fe 0 after 0:3 time 600 
+fe 0 after 0:3 write 2  0x0
+fe 0 after 0:3 en_mkr_rst 0 
+fe 0 after 0:3 rst_level 0 
+fe 0 after 0:3 rd_from_0 0 
+fe 0 after 0:3 test_digout 0 
+fe 0 polarity 0 0
+fe 0 polarity 1 0
+fe 0 polarity 2 0
+fe 0 polarity 3 0
+fe 0 forceon_all 1
+fe 0 sca cnt 510
+fe 0 sca wckdiv 5
+fe 0 crc32_insert_ena 1
+fe 0 keep_fco 0
+fe 0 rst_len 1
+fe 0 skip_rst 0
+fe 0 keep_rst 1
+fe 0 emit_lst_cell_rd 1
+fe 0 trig_ena 8
+fe 0 sca enable 1
+sleep 1
+
+# Back-end configuration
+be 0 crc32_check_ena 1
+be 0 serve_target 1
+be 0 pump timed 1
+be 0 pump timeout 0
+be 0 pump ena fe_workset
+be 0 eb keep_fem_soe 1
+be 0 eb check_ev_nb 1
+be 0 eb check_ev_ts 1
+be 0 eb ts_tolerance 0
+be 0 eb run 1
+
+#  Event generator
+be 0 event_limit 2
+be 0 trig_rate 0 50
+
+#  Disable Pedestal Equalization
+fe 0 subtract_ped 0
+fe 0 hped 0:3 * offset 0
+fe 0 hped 0:3 * clr
+be 0 serve_target 2
+
+#  Enable data taking
+be 0 isobus 0x0C
+be 0 isobus 0x20
+be 0 trig_ena 1
+sleep 15
+be 0 trig_ena 0
+
+#  Print pedestals of all ASICs
+fe 0 hped 0 * getsummary
+fe 0 hped 1 * getsummary
+fe 0 hped 2 * getsummary
+fe 0 hped 3 * getsummary
+
+#  Set Data server target to DAQ
+be 0 serve_target 1
+
+# ------TEST PULSE SECTION------
+
+# ------END------
+

@@ -144,7 +144,8 @@ def generateCovMatrix():
                 histMeanSampleCounts.SetBinContent(iBin+1, histMeanSampleCounts.GetBinContent(iBin+1) + 1)
 
     for iBin in range(histMeanAverage.GetNbinsX()):
-        histMeanAverage.SetBinContent(iBin + 1, histMeanAverage.GetBinContent(iBin + 1)/histMeanSampleCounts.GetBinContent(iBin+1))
+        if histMeanSampleCounts.GetBinContent(iBin+1) != 0:
+            histMeanAverage.SetBinContent(iBin + 1, histMeanAverage.GetBinContent(iBin + 1)/histMeanSampleCounts.GetBinContent(iBin+1))
 
     print("Computing covariance...")
     hist2dCov = TH2D("hist2dCov", "hist2dCov",
@@ -154,7 +155,7 @@ def generateCovMatrix():
     for iBin in range(histMeanAverage.GetNbinsX()):
         for jBin in range(histMeanAverage.GetNbinsX()):
             for iIteration in range(nbIterations):
-                if histMeanList[iIteration].GetBinContent(iBin+1) == 0 or histMeanList[iIteration].GetBinContent(jBin+1):
+                if histMeanList[iIteration].GetBinContent(iBin+1) == 0 or histMeanList[iIteration].GetBinContent(jBin+1) == 0:
                     continue # skip if one of the 2 samples is not valid
                 hist2dCov.SetBinContent(iBin+1, jBin+1,
                                          (histMeanList[iIteration].GetBinContent(iBin+1) - histMeanAverage.GetBinContent(iBin+1))
@@ -165,7 +166,8 @@ def generateCovMatrix():
 
     for iBin in range(histMeanAverage.GetNbinsX()):
         for jBin in range(histMeanAverage.GetNbinsX()):
-            hist2dCov.SetBinContent(iBin+1, jBin+1, hist2dCov.GetBinContent(iBin+1, jBin+1)/hist2dCovCounts.GetBinContent(iBin+1, jBin+1))
+            if hist2dCovCounts.GetBinContent(iBin+1, jBin+1) != 0:
+                hist2dCov.SetBinContent(iBin+1, jBin+1, hist2dCov.GetBinContent(iBin+1, jBin+1)/hist2dCovCounts.GetBinContent(iBin+1, jBin+1))
 
     print("Computing correlation matrix...")
     hist2dCor = hist2dCov.Clone()

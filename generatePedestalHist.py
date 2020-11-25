@@ -76,10 +76,6 @@ def parseFile():
         print("No entry have been found.")
         exit(1)
 
-    outFilePath = "outFile_"+"_".join(filePath.replace("/","_").split('.')[0:-1])+".root"
-    print("Output file will be writen as: " + outFilePath)
-    outFile = TFile.Open(outFilePath, "RECREATE")
-
     # all variables are stored in this event container array. This will prevent python to reallocate doubles at each loop
     event_container = array("d", numpy.zeros((len(varNameList),), dtype=float))
 

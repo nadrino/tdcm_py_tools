@@ -14,6 +14,8 @@ nbIterations = -1
 currentIteration = 0
 filePath = ""
 
+histMeanList = list()
+
 cardList = list()
 chipList = list()
 channelList = list()
@@ -91,6 +93,7 @@ def parseFile():
     print("Putting data in histograms...")
 
     outFile.mkdir("Iteration-" + str(currentIteration))
+    outFile.cd("Iteration-" + str(currentIteration))
 
     for card in cardList:
 
@@ -99,39 +102,36 @@ def parseFile():
         hist2dMean.SetTitle("Mean value")
         hist2dMean.GetXaxis().SetTitle("Channel #")
         hist2dMean.GetYaxis().SetTitle("Chip #")
-        hist2dMean.Write("Iteration-" + str(currentIteration) + "/hist2dMean" + str(card))
+        hist2dMean.Write("hist2dMean" + str(card))
 
         hist2dStdDev = TH2D("hist2dStdDev", "hist2dStdDev", len(channelList), 0, len(channelList), len(chipList), 0, len(chipList))
         pedestalTree.Draw("Chip:Channel>>hist2dStdDev", "StdDev * (Iteration == " + str(currentIteration) + " && Mean < 511)", "goff")
         hist2dStdDev.SetTitle("StdDev value")
         hist2dStdDev.GetXaxis().SetTitle("Channel #")
         hist2dStdDev.GetYaxis().SetTitle("Chip #")
-        hist2dStdDev.Write("Iteration-" + str(currentIteration) + "/hist2dStdDev" + str(card))
+        hist2dStdDev.Write("hist2dStdDev" + str(card))
 
         histMean = TH1D("histMean", "histMean", len(channelList)*len(chipList), 0, len(channelList)*len(chipList))
         pedestalTree.Draw(str(len(channelList))+"*Chip + Channel>>histMean", "Mean * (Iteration == " + str(currentIteration) + " && Mean < 511)", "goff")
         histMean.GetXaxis().SetTitle(str(len(channelList))+"*Chip# + Channel#")
-        histMean.Write("Iteration-" + str(currentIteration) + "/histMean" + str(card))
+        histMean.Write("histMean" + str(card))
+        histMeanList.append(histMean)
 
         histDev = TH1D("histStdDev", "histStdDev", len(channelList)*len(chipList), 0, len(channelList)*len(chipList))
         pedestalTree.Draw(str(len(channelList))+"*Chip + Channel>>histStdDev", "StdDev * (Iteration == " + str(currentIteration) + " && Mean < 511)", "goff")
         histDev.GetXaxis().SetTitle(str(len(channelList)) + "*Chip# + Channel#")
-        histDev.Write("Iteration-" + str(currentIteration) + "/histStdDev" + str(card))
+        histDev.Write("histStdDev" + str(card))
+
+    outFile.cd()
 
 
 def generateCovMatrix():
 
-    global nbIterations
+    global nbIterations, histMeanList
 
     print("Computing average values...")
-    meanHistList = list()
-    for iIteration in range(nbIterations):
-        meanHistList.append(
-            outFile.Get("Iteration-" + str(iIteration) + "/histMean0")
-        )
-
-    histMeanSampleCounts = meanHistList[0].Clone()
-    histMeanAverage = meanHistList[0].Clone()
+    histMeanSampleCounts = histMeanList[0].Clone()
+    histMeanAverage = histMeanList[0].Clone()
 
     for iBin in range(histMeanAverage.GetNbinsX()):
         histMeanAverage.SetBinContent(iBin+1,0)
@@ -139,8 +139,8 @@ def generateCovMatrix():
 
     for iBin in range(histMeanAverage.GetNbinsX()):
         for iIteration in range(nbIterations):
-            if meanHistList[iIteration].GetBinContent(iBin+1) != 0:
-                histMeanAverage.SetBinContent(iBin+1, histMeanAverage.GetBinContent(iBin+1) + meanHistList[iIteration].GetBinContent(iBin+1))
+            if histMeanList[iIteration].GetBinContent(iBin+1) != 0:
+                histMeanAverage.SetBinContent(iBin+1, histMeanAverage.GetBinContent(iBin+1) + histMeanList[iIteration].GetBinContent(iBin+1))
                 histMeanSampleCounts.SetBinContent(iBin+1, histMeanSampleCounts.GetBinContent(iBin+1) + 1)
 
     for iBin in range(histMeanAverage.GetNbinsX()):
@@ -154,11 +154,11 @@ def generateCovMatrix():
     for iBin in range(histMeanAverage.GetNbinsX()):
         for jBin in range(histMeanAverage.GetNbinsX()):
             for iIteration in range(nbIterations):
-                if meanHistList[iIteration].GetBinContent(iBin+1) == 0 or meanHistList[iIteration].GetBinContent(jBin+1):
+                if histMeanList[iIteration].GetBinContent(iBin+1) == 0 or histMeanList[iIteration].GetBinContent(jBin+1):
                     continue # skip if one of the 2 samples is not valid
                 hist2dCov.SetBinContent(iBin+1, jBin+1,
-                                         (meanHistList[iIteration].GetBinContent(iBin+1) - histMeanAverage.GetBinContent(iBin+1))
-                                        *(meanHistList[iIteration].GetBinContent(jBin+1) - histMeanAverage.GetBinContent(jBin+1))
+                                         (histMeanList[iIteration].GetBinContent(iBin+1) - histMeanAverage.GetBinContent(iBin+1))
+                                        *(histMeanList[iIteration].GetBinContent(jBin+1) - histMeanAverage.GetBinContent(jBin+1))
                                         )
 
                 hist2dCovCounts.SetBinContent(iBin+1, jBin+1, hist2dCovCounts.GetBinContent(iBin+1, jBin+1)+1)

@@ -1,0 +1,227 @@
+
+#  FEM cold start script
+be 0 dcbal_enc 1
+be 0 inv_tdcm_mosi 0
+
+# Set active FE
+be 0 fe active fe_workset
+be 0 sel_fe fe_workset
+
+# Enable transceiver of FE
+be 0 iic sfpmezz 0 enable fe_workset
+
+# Reset TX (common to all FE)
+be tx_reset 1
+
+# Reset RX (per FE)
+be rx_reset fe_workset cycle
+
+# Clear reset TX
+be tx_reset 0
+sleep 4
+
+# Enumerate FE
+be dna get
+be dna push
+be dna get
+fe dna show
+
+# Stop FE sampling in case it was left ON
+fe sca enable 0
+
+# Stop data pump on back end in case some were left ON
+be pump ena 0x0
+
+# Restart back-end trigger state machine
+be restart
+
+# Disable back-end event builder
+be eb run 0
+
+# Set ADC delay values in FE
+fe delay_adc dco 0 0xF
+fe delay_adc dco 1 0xF
+fe delay_adc fco 0 0x0
+fe delay_adc fco 1 0x0
+fe delay_adc pipe 0 0x8
+fe delay_adc pipe 1 0x8
+be 0 moni S
+
+# FE monitoring
+fe 0 moni T 2
+fe 0 moni V 2
+fe 0 moni A 2
+fe 0 moni I 2
+fe 0 moni S 2
+
+fe fec_enable 2
+
+# FE monitoring
+fe 0 moni T 1
+fe 0 moni V 1
+fe 0 pulser 1 model T2K2
+fe 0 pulser 1 base 0x3FFF
+fe 0 pulser 1 load
+fe 0 moni A 1
+fe 0 moni I 1
+fe 0 moni S 1
+
+
+# # Test to write to AFTER registers
+
+# # Enable power on the FEC
+fe 0 mode after
+fe fec_enable 2
+sleep 1
+fe fec_enable
+
+# # Clear Register 3
+fe 0 after 8 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 9 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 10 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 11 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 12 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 13 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 14 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 15 wrchk 3 0x0 0x0000 0x0000
+
+# # Write to Register 3
+fe 0 after 8 wrchk 3 0x0 0x0909 0x0909
+fe 0 after 9 wrchk 3 0x0 0x0a0a 0x0a0a
+fe 0 after 10 wrchk 3 0x0 0x0b0b 0x0b0b
+fe 0 after 11 wrchk 3 0x0 0x0c0c 0x0c0c
+fe 0 after 12 wrchk 3 0x0 0x0d0d 0x0d0d
+fe 0 after 13 wrchk 3 0x0 0x0e0e 0x0e0e
+fe 0 after 14 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 15 wrchk 3 0x0 0x0101 0x0101
+
+# # Read Register 3
+fe 0 after 8 read 3
+fe 0 after 9 read 3
+fe 0 after 10 read 3
+fe 0 after 11 read 3
+fe 0 after 12 read 3
+fe 0 after 13 read 3
+fe 0 after 14 read 3
+fe 0 after 15 read 3
+
+# # Clear Register 3
+fe 0 after 8 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 9 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 10 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 11 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 12 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 13 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 14 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 15 wrchk 3 0x0 0x0000 0x0000
+
+fe 0 sca enable 0
+be pump ena 0x0
+be restart
+
+#  Front-end configuration
+
+# Front-end configuration
+fe 0 mode after
+fe 0 fec_enable 2
+fe 0 asic_mask 0x0000
+fe test_enable 0
+fe test_mode 0
+fe test_zbt 0
+fe adc 0 model AD9637
+fe adc 0 write 0x14 0x00
+fe adc 1 model AD9637
+fe adc 1 write 0x14 0x00
+
+# AFTER settings
+fe 0 after 8:15 gain 120
+fe 0 after 8:15 time 100
+fe 0 after 8:15 write 2  0x0
+fe 0 after 8:15 en_mkr_rst 1
+fe 0 after 8:15 rst_level 0
+fe 0 after 8:15 rd_from_0 0
+fe 0 after 8:15 test_digout 0
+fe 0 polarity 8:15 0
+fe 0 forceon_all 1
+fe 0 sca cnt 510
+fe 0 sca wckdiv 4
+fe 0 crc32_insert_ena 1
+fe 0 keep_fco 0
+fe 0 rst_len 1
+fe 0 skip_rst 0
+fe 0 keep_rst 1
+fe 0 emit_lst_cell_rd 1
+fe 0 trig_ena 8
+fe 0 sca enable 1
+fe fra_timeout 0
+sleep 1
+
+# Back-end configuration
+be 0 crc32_check_ena 1
+be 0 serve_target 1
+be 0 pump timed 1
+be 0 pump timeout 0
+be 0 pump ena fe_workset
+be 0 eb keep_fem_soe 1
+be 0 eb check_ev_nb 1
+be 0 eb check_ev_ts 1
+be 0 eb ts_tolerance 0
+be 0 eb run 1
+
+#  Event generator
+be 0 event_limit 2
+be 0 trig_rate 0 5
+
+#  Disable Pedestal Equalization
+fe 0 subtract_ped 0
+fe 0 hped 8:15 * offset 0
+fe 0 hped 8:15 * clr
+be 0 serve_target 2
+
+#  Enable data taking
+be 0 isobus 0x0C
+be 0 isobus 0x20
+be 0 trig_ena 1
+sleep 10
+be 0 trig_ena 0
+
+#  Print pedestals of all ASICs
+fe 0 hped 8 * getsummary
+fe 0 hped 9 * getsummary
+fe 0 hped 10 * getsummary
+fe 0 hped 11 * getsummary
+fe 0 hped 12 * getsummary
+fe 0 hped 13 * getsummary
+fe 0 hped 14 * getsummary
+fe 0 hped 15 * getsummary
+
+# Set pedestal equalization constants
+fe 0 hped 8:15 * centermean 250
+
+# Enable Pedestal Equalization
+fe 0 subtract_ped 1
+fe 0 hped 8:15 * clr
+
+#  Enable data taking
+be 0 trig_ena 1
+sleep 10
+
+#  Disable data taking
+be 0 trig_ena 0
+
+#  Print pedestals of all ASICs
+fe 0 hped 8 * getsummary
+fe 0 hped 9 * getsummary
+fe 0 hped 10 * getsummary
+fe 0 hped 11 * getsummary
+fe 0 hped 12 * getsummary
+fe 0 hped 13 * getsummary
+fe 0 hped 14 * getsummary
+fe 0 hped 15 * getsummary
+
+#  Set thresholds for zero-suppression
+fe 0 hped 8:15 * setthr 250.0 5.0
+
+#  Set Data server target to DAQ
+be 0 serve_target 1
+

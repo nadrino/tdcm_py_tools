@@ -185,7 +185,8 @@ def generateCovMatrix():
     hist2dCov.Write()
     hist2dCor.Write()
 
-pedScriptPath
+
+pedScriptPath = ""
 
 for arg_id in range(len(sys.argv)):
     if sys.argv[arg_id] == "-f":

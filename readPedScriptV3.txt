@@ -76,44 +76,44 @@ sleep 1
 fe fec_enable
 
 # # Clear Register 3
-fe 0 after 8 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 9 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 10 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 11 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 12 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 13 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 14 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 15 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 0 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 1 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 2 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 3 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 4 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 5 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 6 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 7 wrchk 3 0x0 0x0000 0x0000
 
 # # Write to Register 3
-fe 0 after 8 wrchk 3 0x0 0x0909 0x0909
-fe 0 after 9 wrchk 3 0x0 0x0a0a 0x0a0a
-fe 0 after 10 wrchk 3 0x0 0x0b0b 0x0b0b
-fe 0 after 11 wrchk 3 0x0 0x0c0c 0x0c0c
-fe 0 after 12 wrchk 3 0x0 0x0d0d 0x0d0d
-fe 0 after 13 wrchk 3 0x0 0x0e0e 0x0e0e
-fe 0 after 14 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 15 wrchk 3 0x0 0x0101 0x0101
+fe 0 after 0 wrchk 3 0x0 0x0909 0x0909
+fe 0 after 1 wrchk 3 0x0 0x0a0a 0x0a0a
+fe 0 after 2 wrchk 3 0x0 0x0b0b 0x0b0b
+fe 0 after 3 wrchk 3 0x0 0x0c0c 0x0c0c
+fe 0 after 4 wrchk 3 0x0 0x0d0d 0x0d0d
+fe 0 after 5 wrchk 3 0x0 0x0e0e 0x0e0e
+fe 0 after 6 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 7 wrchk 3 0x0 0x0101 0x0101
 
 # # Read Register 3
-fe 0 after 8 read 3
-fe 0 after 9 read 3
-fe 0 after 10 read 3
-fe 0 after 11 read 3
-fe 0 after 12 read 3
-fe 0 after 13 read 3
-fe 0 after 14 read 3
-fe 0 after 15 read 3
+fe 0 after 0 read 3
+fe 0 after 1 read 3
+fe 0 after 2 read 3
+fe 0 after 3 read 3
+fe 0 after 4 read 3
+fe 0 after 5 read 3
+fe 0 after 6 read 3
+fe 0 after 7 read 3
 
 # # Clear Register 3
-fe 0 after 8 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 9 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 10 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 11 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 12 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 13 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 14 wrchk 3 0x0 0x0000 0x0000
-fe 0 after 15 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 0 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 1 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 2 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 3 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 4 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 5 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 6 wrchk 3 0x0 0x0000 0x0000
+fe 0 after 7 wrchk 3 0x0 0x0000 0x0000
 
 fe 0 sca enable 0
 be pump ena 0x0
@@ -134,14 +134,14 @@ fe adc 1 model AD9637
 fe adc 1 write 0x14 0x00
 
 # AFTER settings
-fe 0 after 8:15 gain 120
-fe 0 after 8:15 time 100
-fe 0 after 8:15 write 2  0x0
-fe 0 after 8:15 en_mkr_rst 1
-fe 0 after 8:15 rst_level 0
-fe 0 after 8:15 rd_from_0 0
-fe 0 after 8:15 test_digout 0
-fe 0 polarity 8:15 0
+fe 0 after 0:7 gain 120
+fe 0 after 0:7 time 100
+fe 0 after 0:7 write 2  0x0
+fe 0 after 0:7 en_mkr_rst 1
+fe 0 after 0:7 rst_level 0
+fe 0 after 0:7 rd_from_0 0
+fe 0 after 0:7 test_digout 0
+fe 0 polarity 0:7 0
 fe 0 forceon_all 1
 fe 0 sca cnt 510
 fe 0 sca wckdiv 4
@@ -174,8 +174,8 @@ be 0 trig_rate 0 5
 
 #  Disable Pedestal Equalization
 fe 0 subtract_ped 0
-fe 0 hped 8:15 * offset 0
-fe 0 hped 8:15 * clr
+fe 0 hped 0:7 * offset 0
+fe 0 hped 0:7 * clr
 be 0 serve_target 2
 
 #  Enable data taking
@@ -186,21 +186,21 @@ sleep 10
 be 0 trig_ena 0
 
 #  Print pedestals of all ASICs
-fe 0 hped 8 * getsummary
-fe 0 hped 9 * getsummary
-fe 0 hped 10 * getsummary
-fe 0 hped 11 * getsummary
-fe 0 hped 12 * getsummary
-fe 0 hped 13 * getsummary
-fe 0 hped 14 * getsummary
-fe 0 hped 15 * getsummary
+fe 0 hped 0 * getsummary
+fe 0 hped 1 * getsummary
+fe 0 hped 2 * getsummary
+fe 0 hped 3 * getsummary
+fe 0 hped 4 * getsummary
+fe 0 hped 5 * getsummary
+fe 0 hped 6 * getsummary
+fe 0 hped 7 * getsummary
 
 # Set pedestal equalization constants
-fe 0 hped 8:15 * centermean 250
+fe 0 hped 0:7 * centermean 250
 
 # Enable Pedestal Equalization
 fe 0 subtract_ped 1
-fe 0 hped 8:15 * clr
+fe 0 hped 0:7 * clr
 
 #  Enable data taking
 be 0 trig_ena 1
@@ -210,18 +210,19 @@ sleep 10
 be 0 trig_ena 0
 
 #  Print pedestals of all ASICs
-fe 0 hped 8 * getsummary
-fe 0 hped 9 * getsummary
-fe 0 hped 10 * getsummary
-fe 0 hped 11 * getsummary
-fe 0 hped 12 * getsummary
-fe 0 hped 13 * getsummary
-fe 0 hped 14 * getsummary
-fe 0 hped 15 * getsummary
+# fe 0 hped 0 * getsummary
+# fe 0 hped 1 * getsummary
+# fe 0 hped 2 * getsummary
+# fe 0 hped 3 * getsummary
+# fe 0 hped 4 * getsummary
+# fe 0 hped 5 * getsummary
+# fe 0 hped 6 * getsummary
+# fe 0 hped 7 * getsummary
 
 #  Set thresholds for zero-suppression
-fe 0 hped 8:15 * setthr 250.0 5.0
+fe 0 hped 0:7 * setthr 250.0 5.0
 
 #  Set Data server target to DAQ
 be 0 serve_target 1
 
+quit

@@ -185,11 +185,13 @@ def generateCovMatrix():
     hist2dCov.Write()
     hist2dCor.Write()
 
-
+pedScriptPath
 
 for arg_id in range(len(sys.argv)):
     if sys.argv[arg_id] == "-f":
         filePath = sys.argv[arg_id+1]
+    if sys.argv[arg_id] == "-s":
+        pedScriptPath = sys.argv[arg_id+1]
     elif sys.argv[arg_id] == "-it":
         nbIterations = int(sys.argv[arg_id+1])
 
@@ -200,19 +202,24 @@ outFile = TFile.Open(outFilePath, "RECREATE")
 if nbIterations == -1:
     parseFile()
 else:
+    if pedScriptPath is "":
+        print("pedScriptPath is not set (-s)")
+        exit()
     for iIteration in range(nbIterations):
         currentIteration = iIteration
         print("-> Next iteration:", currentIteration)
         print("Power cycle the TDCM...")
         print("Power OFF...")
         os.system("sudo /home/lpnhe/powtdcm.py 0")
-        os.system("sleep 10")
+        print("Waiting 5 sec...")
+        os.system("sleep 5")
         print("Power ON...")
         os.system("sudo /home/lpnhe/powtdcm.py 1")
-        os.system("sleep 15")
+        print("Waiting 20 sec...")
+        os.system("sleep 20")
 
         print("Taking pedestals...")
-        os.system("pclient -s 192.168.0.44 -f readPedScriptV2.txt > " + filePath)
+        os.system("pclient -s 192.168.0.44 -f " + pedScriptPath + " > " + filePath)
 
         parseFile()
     generateCovMatrix()
